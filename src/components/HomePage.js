@@ -5,7 +5,7 @@ const HomePage = () => {
   return (
     <div className="container">
       <div className="form-container">
-        <h2>Welcome to Video Uploader</h2>
+        <h2>Welcome to SAFAR interface</h2>
         <p>Use the navigation bar to upload a video or see results.</p>
       </div>
     </div>
