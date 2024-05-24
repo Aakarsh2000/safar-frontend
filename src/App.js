@@ -7,6 +7,7 @@ import VideoUploadPage from './components/VideoUploadPage';
 import SeeResultsPage from './components/SeeResultsPage';
 import ProcessingPage from './components/ProcessingPage';
 import './styles.css';
+import VideoUploadChunk from './components/VideoUploadChunk';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/upload-video" element={<VideoUploadPage />} />
         <Route path="/see-results" element={<SeeResultsPage />} />
         <Route path="/video/:taskId" element={<ProcessingPage />} />
+        <Route path="/upload-chunk" element={<VideoUploadChunk />} />
       </Routes>
     </Router>
   );
