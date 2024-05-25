@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const VideoUploadChunk = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [taskID, setTaskID] = useState(null); // Store the task ID for reference
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState('idle'); // Initial status
+  const [detectStatus, setDetectStatus] = useState('idle'); // Initial detect status
+  const [detectProgress, setDetectProgress] = useState(0); // Initial detect progress
 
   const fileInputRef = useRef(null);
 
@@ -59,6 +61,18 @@ const VideoUploadChunk = () => {
       }
 
       setUploadStatus('success'); // Upload successful
+      // Call the detect API after upload is done
+      await fetch('http://127.0.0.1:5000/detect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          task_id: taskID,
+        }),
+      });
+      // Set detect status to in progress after the detect API call
+      setDetectStatus('in_progress');
     } catch (error) {
       console.error(error);
       setUploadStatus('error'); // Handle upload errors
@@ -66,6 +80,34 @@ const VideoUploadChunk = () => {
       setSelectedFile(null); // Reset state after upload
     }
   };
+
+  const checkDetectProgress = async () => {
+    if (taskID && detectStatus === 'in_progress') {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/progress/${taskID}`);
+        const data = await response.json();
+        if (data.progress === 100) {
+          setDetectStatus('success');
+          // Download the video after detection is completed
+          window.location.href = `http://127.0.0.1:5000/download/${taskID}`;
+          // Refresh the page after detection is completed
+          setTimeout(() => {
+            window.location.reload();
+          }, 5000); // Refresh after 5 seconds
+        } else {
+          setDetectProgress(data.progress);
+        }
+      } catch (error) {
+        console.error(error);
+        setDetectStatus('error');
+      }
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(checkDetectProgress, 1000); // Check progress every second
+    return () => clearInterval(interval);
+  }, [taskID, detectStatus]);
 
   const renderUploadButton = () => {
     if (uploadStatus === 'uploading') {
@@ -86,6 +128,9 @@ const VideoUploadChunk = () => {
         <div>
           <p>Uploading: {uploadProgress}%</p>
         </div>
+      )}
+      {detectStatus === 'in_progress' && (
+        <p>Detecting: {detectProgress}%</p>
       )}
       {renderUploadButton()}
     </div>
