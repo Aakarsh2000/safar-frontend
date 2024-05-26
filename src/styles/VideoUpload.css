@@ -36,3 +36,32 @@ button:hover {
 .upload-message p {
   display: block; /* Ensure each message appears on its own line */
 }
+
+.event-strings-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #f0f0f0;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.event-strings-box {
+  background-color: #f0f0f0;
+  max-height: calc(100vh - 50px); /* Adjust as necessary */
+  overflow-y: auto;
+  padding: 10px;
+  margin-top: 50px; /* Adjust to accommodate the fixed header */
+}
+
+.event-strings-box {
+  background-color: #f0f0f0; /* Different background color */
+  max-height: 700px; /* Maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px; /* Add padding for spacing */
+  margin-top: 20px; /* Add margin to separate from other content */
+}
+
+.event-strings-content {
+  /* No specific styles needed here, inherits from event-strings-box */
+}

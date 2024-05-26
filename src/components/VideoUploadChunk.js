@@ -10,6 +10,7 @@ const VideoUploadChunk = () => {
   const [detectProgress, setDetectProgress] = useState(0);
   const [detectionInfo, setDetectionInfo] = useState('');
   const [sseStarted, setSseStarted] = useState(false); // Track if SSE started
+  const [eventStrings, setEventStrings] = useState([]); // Store event strings
 
   const fileInputRef = useRef(null);
 
@@ -108,6 +109,8 @@ const VideoUploadChunk = () => {
           } else {
             setDetectProgress(progress);
             setDetectionInfo(data.string || '');
+            // Add the string to the eventStrings array
+            setEventStrings(prevEventStrings => [...prevEventStrings, data.string]);
           }
         } catch (error) {
           console.error('Error parsing message data:', error);
@@ -152,7 +155,14 @@ const VideoUploadChunk = () => {
         {detectStatus === 'in_progress' && (
           <div>
             <p>Detecting: {detectProgress}%</p>
-            <p>Details: {detectionInfo}</p>
+            <div className="event-strings-box">
+              <h3>Event Strings:</h3>
+              <div className="event-strings-content">
+                {eventStrings.map((eventString, index) => (
+                  <p key={index}>{eventString}</p>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
