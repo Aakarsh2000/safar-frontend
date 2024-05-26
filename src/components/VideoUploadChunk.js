@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import '../styles/VideoUpload.css'
 
 const VideoUploadChunk = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -119,10 +120,19 @@ const VideoUploadChunk = () => {
     }
   };
 
-  return (
-    <div>
+
+// Inside the VideoUploadChunk component
+
+return (
+  <div className="container">
+    <div className="input-container">
       <input type="file" ref={fileInputRef} onChange={handleFileChange} />
-      <br />
+      <label htmlFor="file" className="choose-file-button" onClick={() => fileInputRef.current.click()}>Choose File</label>
+    </div>
+    <div className="upload-button">
+      {renderUploadButton()}
+    </div>
+    <div className="upload-message">
       {uploadStatus === 'pending' && <p>Preparing to upload...</p>}
       {uploadStatus === 'uploading' && (
         <div>
@@ -132,9 +142,9 @@ const VideoUploadChunk = () => {
       {detectStatus === 'in_progress' && (
         <p>Detecting: {detectProgress}%</p>
       )}
-      {renderUploadButton()}
     </div>
-  );
+  </div>
+);
 };
 
 export default VideoUploadChunk;
