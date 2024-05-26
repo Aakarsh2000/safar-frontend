@@ -155,8 +155,11 @@ const VideoUploadChunk = () => {
         {detectStatus === 'in_progress' && (
           <div>
             <p>Detecting: {detectProgress}%</p>
+            <div className="progress-bar">
+              <div className="progress-bar-fill" style={{ width: `${detectProgress}%` }}></div>
+            </div>
+            <h3>Event Strings:</h3>
             <div className="event-strings-box">
-              <h3>Event Strings:</h3>
               <div className="event-strings-content">
                 {eventStrings.map((eventString, index) => (
                   <p key={index}>{eventString}</p>
