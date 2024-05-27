@@ -8,7 +8,6 @@ const VideoUploadChunk = () => {
   const [uploadStatus, setUploadStatus] = useState('idle');
   const [detectStatus, setDetectStatus] = useState('idle');
   const [detectProgress, setDetectProgress] = useState(0);
-  const [detectionInfo, setDetectionInfo] = useState('');
   const [sseStarted, setSseStarted] = useState(false); // Track if SSE started
   const [eventStrings, setEventStrings] = useState([]); // Store event strings
 
@@ -108,7 +107,6 @@ const VideoUploadChunk = () => {
             }, 5000); // Refresh after 5 seconds
           } else {
             setDetectProgress(progress);
-            setDetectionInfo(data.string || '');
             // Add the string to the eventStrings array
             setEventStrings(prevEventStrings => [...prevEventStrings, data.string]);
           }
@@ -158,7 +156,7 @@ const VideoUploadChunk = () => {
             <div className="progress-bar">
               <div className="progress-bar-fill" style={{ width: `${detectProgress}%` }}></div>
             </div>
-            <h3>Event Strings:</h3>
+            <h3>Events:</h3>
             <div className="event-strings-box">
               <div className="event-strings-content">
                 {eventStrings.map((eventString, index) => (
