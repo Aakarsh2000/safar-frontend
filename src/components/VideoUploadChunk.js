@@ -3,6 +3,7 @@ import '../styles/VideoUpload.css';
 
 const VideoUploadChunk = () => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null); 
   const [taskID, setTaskID] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState('idle');
@@ -23,6 +24,7 @@ const VideoUploadChunk = () => {
     // Generate a unique task ID (consider using a library like uuid)
     const generatedTaskID = Math.random().toString(36).substring(2, 15);
     setTaskID(generatedTaskID);
+    setVideoPreview(URL.createObjectURL(file));
   };
 
   const handleUpload = async () => {
@@ -143,6 +145,16 @@ const VideoUploadChunk = () => {
       <div className="upload-button">
         {renderUploadButton()}
       </div>
+      {videoPreview && selectedFile && (
+        <div className="video-preview-container">
+          <div className="centered-content">
+            <video className="video-preview" controls>
+              <source src={videoPreview} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      )}
       <div className="upload-message">
         {uploadStatus === 'pending' && <p>Preparing to upload...</p>}
         {uploadStatus === 'uploading' && (

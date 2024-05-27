@@ -83,3 +83,20 @@ button:hover {
   transition: width 0.3s ease-in-out;
 }
 
+.video-preview-container {
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+  margin-top: 20px; /* Adjust as needed to create space between the video and the element above it */
+}
+
+.centered-content {
+  width: 100%; /* Ensures the video takes up the full width of the container */
+  max-width: 100%; /* Ensure content doesn't overflow */
+}
+
+.video-preview {
+  width: 100%; /* Ensures the video takes up the full width of its container */
+  max-width: 100%; /* Ensure the video doesn't exceed its container */
+}
+
+
