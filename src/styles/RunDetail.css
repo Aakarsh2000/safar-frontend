@@ -62,4 +62,14 @@
     color: #ff0000;
     text-align: center;
   }
+
+  .table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    margin-right: 10px;
+  }
+  
   
