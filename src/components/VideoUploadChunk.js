@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Chart from 'chart.js/auto';
 import '../styles/VideoUpload.css';
 
 const VideoUploadChunk = () => {
+  const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null); 
   const [taskID, setTaskID] = useState(null);
@@ -9,10 +11,11 @@ const VideoUploadChunk = () => {
   const [uploadStatus, setUploadStatus] = useState('idle');
   const [detectStatus, setDetectStatus] = useState('idle');
   const [detectProgress, setDetectProgress] = useState(0);
-  const [sseStarted, setSseStarted] = useState(false); // Track if SSE started
-  const [eventStrings, setEventStrings] = useState([]); // Store event strings
+  const [sseStarted, setSseStarted] = useState(false);
+  const [eventStrings, setEventStrings] = useState([]);
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null);
 
-  const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -21,7 +24,6 @@ const VideoUploadChunk = () => {
     setSelectedFile(file);
     setUploadStatus('pending');
 
-    // Generate a unique task ID (consider using a library like uuid)
     const generatedTaskID = Math.random().toString(36).substring(2, 15);
     setTaskID(generatedTaskID);
     setVideoPreview(URL.createObjectURL(file));
@@ -34,7 +36,7 @@ const VideoUploadChunk = () => {
     }
 
     const file = selectedFile;
-    const chunkSize = 1024 * 1024; // 1MB chunks
+    const chunkSize = 1024 * 1024;
     const totalChunks = Math.ceil(file.size / chunkSize);
 
     setUploadStatus('uploading');
@@ -71,15 +73,13 @@ const VideoUploadChunk = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          task_id: taskID,
-        }),
+        body: JSON.stringify({ task_id: taskID }),
       });
 
       if (detectResponse.ok) {
         setDetectStatus('in_progress');
         setTimeout(() => {
-          setSseStarted(true); // Start SSE after 5 seconds
+          setSseStarted(true);
         }, 5000);
       } else {
         throw new Error('Detect API call failed');
@@ -90,6 +90,17 @@ const VideoUploadChunk = () => {
     } finally {
       setSelectedFile(null);
     }
+  };
+
+  const parseEventString = (eventString) => {
+    const entries = eventString.split(', ');
+    const data = entries.reduce((acc, entry) => {
+      const [count, label] = entry.split(' ');
+      acc.labels.push(label);
+      acc.data.push(parseInt(count));
+      return acc;
+    }, { labels: [], data: [] });
+    return data;
   };
 
   useEffect(() => {
@@ -106,11 +117,42 @@ const VideoUploadChunk = () => {
             window.location.href = `http://127.0.0.1:5000/download/${taskID}`;
             setTimeout(() => {
               window.location.reload();
-            }, 5000); // Refresh after 5 seconds
+            }, 5000);
           } else {
             setDetectProgress(progress);
-            // Add the string to the eventStrings array
-            setEventStrings(prevEventStrings => [...prevEventStrings, data.string]);
+            const latestEventString = data.string;
+            setEventStrings(prevEventStrings => [...prevEventStrings, latestEventString]);
+            
+            const parsedData = parseEventString(latestEventString);
+            const labels = parsedData.labels;
+            const chartData = parsedData.data;
+            if (chartInstance.current) {
+              // Update existing chart
+              chartInstance.current.data.labels = labels;
+              chartInstance.current.data.datasets[0].data = chartData;
+              chartInstance.current.update();
+            } else {
+              // Create new chart
+              const ctx = chartRef.current.getContext('2d');
+              chartInstance.current = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: 'Object Counts',
+                    data: chartData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                  }],
+                },
+                options: {
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                    },
+                  },
+                },
+              });
+            }
           }
         } catch (error) {
           console.error('Error parsing message data:', error);
@@ -167,6 +209,9 @@ const VideoUploadChunk = () => {
             <p>Detecting: {detectProgress}%</p>
             <div className="progress-bar">
               <div className="progress-bar-fill" style={{ width: `${detectProgress}%` }}></div>
+            </div>
+            <div>
+              <canvas ref={chartRef} />
             </div>
             <h3>Events:</h3>
             <div className="event-strings-box">
