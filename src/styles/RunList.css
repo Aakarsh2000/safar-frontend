@@ -35,3 +35,15 @@
     color: #0056b3;
   }
   
+  .custom-link {
+    margin-left: 10px; /* Adjust the value as needed */
+    color: #0056b3 !important; 
+    text-decoration: none; /* Remove underline */
+  }
+  
+  .custom-link:hover {
+    text-decoration: underline; /* Add underline on hover */
+  }
+  
+  
+  

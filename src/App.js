@@ -8,6 +8,7 @@ import './styles.css';
 import VideoUploadChunk from './components/VideoUploadChunk';
 import RunList from './components/RunList';
 import RunDetail from './components/RunDetail';
+import RunSpeeds from './components/RunSpeeds';
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/upload-video" element={<VideoUploadChunk />} />
         <Route path="/run" element = {<RunList/>} />
-        <Route path="/run/:name" element = {<RunDetail/>} />
+        <Route path="/run/run-details/:name" element = {<RunDetail/>} />
+        <Route path="/run/run-speeds/:name" element = {<RunSpeeds/>} />
         <Route path="/see-results" element={<SeeResultsPage />} />
       </Routes>
     </Router>

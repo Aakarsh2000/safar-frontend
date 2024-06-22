@@ -25,10 +25,13 @@ const RunList = () => {
       <ul>
         {runs.map(run => (
           <li key={run}>
-            <Link to={`/run/${run}`}>{run}</Link>
+            {run}: 
+            <Link to={`/run/run-details/${run}`} className="custom-link">Details</Link>
+            <Link to={`/run/run-speeds/${run}`} className="custom-link">Speeds</Link>
           </li>
         ))}
       </ul>
+
     </div>
   );
 };
